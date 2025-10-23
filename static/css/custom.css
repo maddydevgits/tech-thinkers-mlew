@@ -189,3 +189,25 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: #059669;
 }
+
+/* ---------------------------------------------- */
+/* Mobile responsiveness helpers                  */
+/* ---------------------------------------------- */
+
+/* Ensure media scales within containers on small screens */
+img, video {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Smooth horizontal scroll for wide content like tables */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Break long words/IDs gracefully to avoid overflow */
+.break-anywhere {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}

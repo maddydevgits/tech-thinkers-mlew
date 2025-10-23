@@ -80,7 +80,7 @@
                 
                 <div class="p-6">
                     <div class="flex justify-between items-start mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900" data-translate="product_name_{{ loop.index }}">{{ product.name }}</h3>
+                        <h3 class="text-lg font-semibold text-gray-900 break-anywhere" data-translate="product_name_{{ loop.index }}">{{ product.name }}</h3>
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800" data-translate="crop_type_{{ loop.index }}">
                             {{ product.crop_type }}
                         </span>
@@ -89,12 +89,12 @@
                     <div class="space-y-3">
                         <div>
                             <h4 class="text-sm font-medium text-gray-700 mb-1" data-translate="specifications">Specifications:</h4>
-                            <p class="text-sm text-gray-600" data-translate="specifications_{{ loop.index }}">{{ product.specifications[:100] }}{% if product.specifications|length > 100 %}...{% endif %}</p>
+                            <p class="text-sm text-gray-600 break-anywhere" data-translate="specifications_{{ loop.index }}">{{ product.specifications[:100] }}{% if product.specifications|length > 100 %}...{% endif %}</p>
                         </div>
 
                         <div>
                             <h4 class="text-sm font-medium text-gray-700 mb-1" data-translate="active_chemicals">Active Chemicals:</h4>
-                            <p class="text-sm text-gray-600" data-translate="chemicals_{{ loop.index }}">{{ product.chemicals[:80] }}{% if product.chemicals|length > 80 %}...{% endif %}</p>
+                            <p class="text-sm text-gray-600 break-anywhere" data-translate="chemicals_{{ loop.index }}">{{ product.chemicals[:80] }}{% if product.chemicals|length > 80 %}...{% endif %}</p>
                         </div>
 
                         <div class="flex justify-between items-center pt-3 border-t border-gray-200">
