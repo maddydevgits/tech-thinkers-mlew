@@ -7,6 +7,9 @@ import os
 import uuid
 from bson import ObjectId
 from dotenv import load_dotenv
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # Load environment variables
 load_dotenv()
@@ -24,6 +27,9 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
+# Email configuration toggle
+EMAIL_NOTIFICATIONS_ENABLED = os.environ.get('EMAIL_NOTIFICATIONS_ENABLED', 'true').lower() == 'true'
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -39,6 +45,78 @@ def save_uploaded_file(file):
         file.save(file_path)
         return unique_filename
     return None
+
+
+def send_new_product_email_to_all_farmers(product: dict) -> None:
+    """Send an email notification about a new product to all farmers.
+
+    Uses Gmail SMTP (smtp.gmail.com) with an App Password. Configure with env vars:
+    - GMAIL_SMTP_USER
+    - GMAIL_SMTP_APP_PASSWORD
+    Optionally disable via EMAIL_NOTIFICATIONS_ENABLED=false.
+    """
+    if not EMAIL_NOTIFICATIONS_ENABLED:
+        return
+
+    gmail_user = os.environ.get('GMAIL_SMTP_USER')
+    gmail_app_password = os.environ.get('GMAIL_SMTP_APP_PASSWORD')
+
+    if not gmail_user or not gmail_app_password:
+        # Missing credentials: skip sending rather than breaking the request
+        print("Email notifications disabled: missing GMAIL_SMTP_USER or GMAIL_SMTP_APP_PASSWORD")
+        return
+
+    # Collect all farmer emails
+    farmers = mongo.db.users.find({'user_type': 'farmer'}, {'email': 1})
+    recipients = []
+    for farmer in farmers:
+        email = farmer.get('email')
+        if email and isinstance(email, str):
+            recipients.append(email.strip())
+
+    # De-duplicate and filter empties
+    recipients = sorted({e for e in recipients if e})
+    if not recipients:
+        return
+
+    subject = f"New Product: {product.get('name', 'New item')} at {product.get('shop_name', 'a shop')}"
+    # Plain text email body
+    body_lines = [
+        f"A new product has been listed on Pesti-Link:",
+        "",
+        f"Name: {product.get('name', '-')}",
+        f"Shop: {product.get('shop_name', '-')}",
+        f"Price: {product.get('cost', '-')}",
+        f"Quantity: {product.get('quantity', '-')}",
+        f"Crop Type: {product.get('crop_type', '-')}",
+        f"Chemicals: {product.get('chemicals', '-')}",
+        "",
+        "Log in to Pesti-Link to view details and place an order.",
+    ]
+    body = "\n".join(body_lines)
+
+    # Build message once; we'll BCC recipients in chunks
+    msg = MIMEMultipart()
+    msg['From'] = gmail_user
+    msg['To'] = gmail_user  # primary recipient placeholder; actual recipients via BCC
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587, timeout=30) as server:
+            server.starttls()
+            server.login(gmail_user, gmail_app_password)
+
+            # Send in chunks to avoid overly large RCPT lists
+            chunk_size = 50
+            for i in range(0, len(recipients), chunk_size):
+                chunk = recipients[i:i + chunk_size]
+                # Add BCC header for transparency (optional)
+                msg_bcc = msg.as_string()
+                server.sendmail(gmail_user, chunk, msg_bcc)
+    except Exception as e:
+        # Log error but do not interrupt the request flow
+        print(f"Email send error (new product): {e}")
 
 # Routes
 @app.route('/')
@@ -146,7 +224,8 @@ def add_product():
             'created_at': datetime.utcnow()
         }
         
-        mongo.db.products.insert_one(product)
+        result = mongo.db.products.insert_one(product)
+        product['_id'] = result.inserted_id
         
         # Create notification for farmers
         notification = {
@@ -157,6 +236,13 @@ def add_product():
             'created_at': datetime.utcnow()
         }
         mongo.db.notifications.insert_one(notification)
+
+        # Send email notifications to all farmers
+        try:
+            send_new_product_email_to_all_farmers(product)
+        except Exception as e:
+            # Avoid breaking UX if email sending has issues
+            print(f"Error dispatching new product emails: {e}")
         
         flash('Product added successfully!', 'success')
         return redirect(url_for('dashboard'))

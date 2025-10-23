@@ -45,6 +45,22 @@ SECRET_KEY=your-secret-key-here-change-in-production
 MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/pesti_link?retryWrites=true&w=majority
 ```
 
+#### Email Notifications (Gmail SMTP)
+To send email notifications to all farmers when a new product is added, configure Gmail SMTP using an App Password.
+
+1. Enable 2‑Step Verification on your Google account.
+2. Create an App Password for "Mail" on your device at `https://myaccount.google.com/apppasswords`.
+3. Add the following to your `.env` file:
+```
+# Gmail SMTP credentials (App Password required)
+GMAIL_SMTP_USER=your_gmail_address@gmail.com
+GMAIL_SMTP_APP_PASSWORD=your_16_char_app_password
+
+# Optional: disable email notifications (default: true)
+EMAIL_NOTIFICATIONS_ENABLED=true
+```
+The application will connect to `smtp.gmail.com:587` using TLS and send plain-text emails to all users with `user_type = "farmer"`.
+
 ### 4. Run the Application
 ```bash
 python app.py
