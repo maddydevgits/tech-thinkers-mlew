@@ -14,22 +14,16 @@
     <!-- Navigation -->
     <nav class="bg-green-600 shadow-lg">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
                     <a href="{{ url_for('index') }}" class="flex items-center space-x-2 text-white">
                         <i class="fas fa-seedling text-xl sm:text-2xl"></i>
                         <span class="text-lg sm:text-xl font-bold">Pesti-Link</span>
                     </a>
                 </div>
-                
-                <!-- Mobile menu button -->
-                <div class="md:hidden">
-                    <button type="button" class="text-white hover:text-green-200 focus:outline-none focus:text-green-200" onclick="toggleMobileMenu()">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <!-- Language Selector -->
+
+                <div class="flex items-center space-x-2 sm:space-x-4">
+                    <!-- Language Selector (always visible) -->
                     <div class="flex items-center space-x-2">
                         <i class="fas fa-globe text-white"></i>
                         <select id="language-selector" class="bg-green-700 text-white px-2 py-1 rounded text-sm border-none focus:outline-none focus:ring-2 focus:ring-green-300">
@@ -39,39 +33,70 @@
                             <option value="ta">Tamil</option>
                         </select>
                     </div>
-                    
-                    {% if session.user_id %}
-                        <span class="text-white" data-translate="welcome">Welcome, {{ session.username }}!</span>
-                        <a href="{{ url_for('dashboard') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="dashboard">
-                            Dashboard
-                        </a>
-                        {% if session.user_type == 'farmer' %}
-                            <a href="{{ url_for('search') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="search_products">
-                                Search Products
+
+                    <!-- Desktop navigation links -->
+                    <div class="hidden md:flex items-center space-x-4">
+                        {% if session.user_id %}
+                            <span class="text-white" data-translate="welcome">Welcome, {{ session.username }}!</span>
+                            <a href="{{ url_for('dashboard') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="dashboard">
+                                Dashboard
                             </a>
-                            <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
-                                My Orders
-                            </a>
-                            <a href="{{ url_for('notifications') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="notifications">
-                                Notifications
+                            {% if session.user_type == 'farmer' %}
+                                <a href="{{ url_for('search') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="search_products">
+                                    Search Products
+                                </a>
+                                <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
+                                    My Orders
+                                </a>
+                                <a href="{{ url_for('notifications') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="notifications">
+                                    Notifications
+                                </a>
+                            {% else %}
+                                <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
+                                    My Orders
+                                </a>
+                            {% endif %}
+                            <a href="{{ url_for('logout') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="logout">
+                                Logout
                             </a>
                         {% else %}
-                            <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
-                                My Orders
+                            <a href="{{ url_for('login') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="login">
+                                Login
+                            </a>
+                            <a href="{{ url_for('register') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="register">
+                                Register
                             </a>
                         {% endif %}
-                        <a href="{{ url_for('logout') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="logout">
-                            Logout
-                        </a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="login">
-                            Login
-                        </a>
-                        <a href="{{ url_for('register') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="register">
-                            Register
-                        </a>
-                    {% endif %}
+                    </div>
+
+                    <!-- Mobile menu button -->
+                    <div class="md:hidden">
+                        <button type="button" class="text-white hover:text-green-200 focus:outline-none focus:text-green-200" onclick="toggleMobileMenu()" aria-controls="mobile-menu" aria-expanded="false">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile navigation menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-green-600">
+            <div class="px-4 pt-2 pb-3 space-y-1">
+                {% if session.user_id %}
+                    <div class="text-white px-3 py-2" data-translate="welcome">Welcome, {{ session.username }}!</div>
+                    <a href="{{ url_for('dashboard') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="dashboard">Dashboard</a>
+                    {% if session.user_type == 'farmer' %}
+                        <a href="{{ url_for('search') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="search_products">Search Products</a>
+                        <a href="{{ url_for('my_orders') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="my_orders">My Orders</a>
+                        <a href="{{ url_for('notifications') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="notifications">Notifications</a>
+                    {% else %}
+                        <a href="{{ url_for('my_orders') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="my_orders">My Orders</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}" class="block text-white bg-green-700 hover:bg-green-800 rounded-md px-3 py-2 text-base font-medium mt-1" data-translate="logout">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="block text-white hover:bg-green-700 rounded-md px-3 py-2 text-base font-medium" data-translate="login">Login</a>
+                    <a href="{{ url_for('register') }}" class="block text-white bg-green-700 hover:bg-green-800 rounded-md px-3 py-2 text-base font-medium mt-1" data-translate="register">Register</a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -105,5 +130,12 @@
             <p class="text-gray-500 text-sm mt-2" data-translate="copyright">&copy; 2024 Pesti-Link. All rights reserved.</p>
         </div>
     </footer>
+    <script>
+    function toggleMobileMenu() {
+        var menu = document.getElementById('mobile-menu');
+        if (!menu) return;
+        menu.classList.toggle('hidden');
+    }
+    </script>
 </body>
 </html>

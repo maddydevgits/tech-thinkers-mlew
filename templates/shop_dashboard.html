@@ -30,7 +30,7 @@
         </div>
         
         {% if products %}
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto table-responsive">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
@@ -60,8 +60,8 @@
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ product.name }}</div>
-                                <div class="text-sm text-gray-500">{{ product.specifications[:50] }}...</div>
+                                <div class="text-sm font-medium text-gray-900 break-anywhere">{{ product.name }}</div>
+                                <div class="text-sm text-gray-500 break-anywhere">{{ product.specifications[:50] }}...</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
