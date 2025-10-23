@@ -14,10 +14,13 @@
             <a href="{{ url_for('add_product') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="add_new_product">
                 <i class="fas fa-plus mr-2"></i>Add New Product
             </a>
-            <a href="{{ url_for('my_orders') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="my_orders">
+            <a href="{{ url_for('shop_profile') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="shop_profile">
+                <i class="fas fa-store mr-2"></i>Shop Profile
+            </a>
+            <a href="{{ url_for('my_orders') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="my_orders">
                 <i class="fas fa-shopping-cart mr-2"></i>My Orders
             </a>
-            <a href="{{ url_for('search') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="browse_products">
+            <a href="{{ url_for('search') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300" data-translate="browse_products">
                 <i class="fas fa-search mr-2"></i>Browse Products
             </a>
         </div>

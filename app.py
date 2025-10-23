@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 import uuid
+import math
 from bson import ObjectId
 from dotenv import load_dotenv
 import smtplib
@@ -14,12 +15,37 @@ from email.mime.multipart import MIMEMultipart
 # Load environment variables
 load_dotenv()
 
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Calculate distance between two points using Haversine formula"""
+    if not all([lat1, lon1, lat2, lon2]):
+        return None
+    
+    # Convert to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+    
+    # Radius of earth in kilometers
+    r = 6371
+    return c * r
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 
 # MongoDB configuration
 app.config['MONGO_URI'] = os.environ.get('MONGO_URI', 'mongodb://localhost:27017/pesti_link')
 mongo = PyMongo(app)
+
+# Test MongoDB connection
+try:
+    mongo.db.users.find_one()
+    print("MongoDB connection successful!")
+except Exception as e:
+    print(f"MongoDB connection error: {e}")
 
 # File upload configuration
 UPLOAD_FOLDER = 'uploads'
@@ -126,29 +152,49 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        user_type = request.form['user_type']
-        
-        # Check if user already exists
-        if mongo.db.users.find_one({'email': email}):
-            flash('Email already registered!', 'error')
+        try:
+            print("Registration attempt started...")
+            username = request.form['username']
+            email = request.form['email']
+            password = request.form['password']
+            user_type = request.form['user_type']
+            
+            print(f"Form data: username={username}, email={email}, user_type={user_type}")
+            
+            # Check if user already exists
+            if mongo.db.users.find_one({'username': username}):
+                flash('Username already exists!', 'error')
+                return redirect(url_for('register'))
+            
+            if mongo.db.users.find_one({'email': email}):
+                flash('Email already registered!', 'error')
+                return redirect(url_for('register'))
+            
+            # Hash password and create user
+            hashed_password = generate_password_hash(password)
+            user = {
+                'username': username,
+                'email': email,
+                'password': hashed_password,
+                'user_type': user_type,
+                'created_at': datetime.utcnow()
+            }
+            
+            # Shop owners can add location details later in their profile
+            if user_type == 'shop_owner':
+                print("Shop owner registered - can add location details later")
+            
+            print("Inserting user into database...")
+            result = mongo.db.users.insert_one(user)
+            print(f"User inserted with ID: {result.inserted_id}")
+            
+            flash('Registration successful! Please login.', 'success')
+            return redirect(url_for('login'))
+            
+        except Exception as e:
+            print(f"Registration error: {e}")
+            flash(f'Registration failed: {str(e)}', 'error')
             return redirect(url_for('register'))
-        
-        # Hash password and create user
-        hashed_password = generate_password_hash(password)
-        user = {
-            'username': username,
-            'email': email,
-            'password': hashed_password,
-            'user_type': user_type,
-            'created_at': datetime.utcnow()
-        }
-        
-        mongo.db.users.insert_one(user)
-        flash('Registration successful! Please login.', 'success')
-        return redirect(url_for('login'))
     
     return render_template('register.html')
 
@@ -211,6 +257,10 @@ def add_product():
                     flash('Invalid file type. Please upload PNG, JPG, JPEG, GIF, or WebP images only.', 'error')
                     return render_template('add_product.html')
         
+        # Get shop owner info for location data
+        shop_owner = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
+        shop_name = shop_owner.get('shop_name', session['username'])
+        
         product = {
             'name': request.form['name'],
             'specifications': request.form['specifications'],
@@ -219,7 +269,12 @@ def add_product():
             'crop_type': request.form['crop_type'],
             'chemicals': request.form['chemicals'],
             'shop_owner_id': session['user_id'],
-            'shop_name': session['username'],
+            'shop_name': shop_name,
+            'shop_city': shop_owner.get('city', ''),
+            'shop_state': shop_owner.get('state', ''),
+            'shop_pincode': shop_owner.get('pincode', ''),
+            'shop_latitude': shop_owner.get('latitude'),
+            'shop_longitude': shop_owner.get('longitude'),
             'image_filename': image_filename,
             'created_at': datetime.utcnow()
         }
@@ -336,6 +391,9 @@ def search():
     
     query = request.args.get('q', '')
     crop_type = request.args.get('crop_type', '')
+    farmer_lat = request.args.get('lat', '')
+    farmer_lon = request.args.get('lon', '')
+    max_distance = request.args.get('max_distance', '50')  # Default 50km
     
     search_filter = {}
     if query:
@@ -344,7 +402,98 @@ def search():
         search_filter['crop_type'] = {'$regex': crop_type, '$options': 'i'}
     
     products = list(mongo.db.products.find(search_filter))
-    return render_template('search.html', products=products, query=query, crop_type=crop_type)
+    
+    # Calculate distances if farmer location is provided
+    if farmer_lat and farmer_lon:
+        try:
+            farmer_lat = float(farmer_lat)
+            farmer_lon = float(farmer_lon)
+            max_distance = float(max_distance)
+            
+            for product in products:
+                if product.get('shop_latitude') and product.get('shop_longitude'):
+                    distance = calculate_distance(
+                        farmer_lat, farmer_lon,
+                        product['shop_latitude'], product['shop_longitude']
+                    )
+                    product['distance'] = distance
+                else:
+                    product['distance'] = None
+            
+            # Filter by distance and sort by distance
+            products = [p for p in products if p.get('distance') is None or p['distance'] <= max_distance]
+            products.sort(key=lambda x: x.get('distance', float('inf')))
+            
+        except (ValueError, TypeError):
+            pass
+    
+    return render_template('search.html', products=products, query=query, crop_type=crop_type, farmer_lat=farmer_lat, farmer_lon=farmer_lon, max_distance=max_distance)
+
+@app.route('/shop_profile', methods=['GET', 'POST'])
+def shop_profile():
+    if 'user_id' not in session or session['user_type'] != 'shop_owner':
+        flash('Access denied! Only shop owners can access this page.', 'error')
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        try:
+            # Get form data
+            shop_name = request.form.get('shop_name', '')
+            shop_address = request.form.get('shop_address', '')
+            city = request.form.get('city', '')
+            state = request.form.get('state', '')
+            pincode = request.form.get('pincode', '')
+            phone = request.form.get('phone', '')
+            latitude = request.form.get('latitude', '')
+            longitude = request.form.get('longitude', '')
+            
+            # Validate required fields
+            if not all([shop_name, shop_address, city, state, pincode, phone]):
+                flash('Please fill all required fields!', 'error')
+                return redirect(url_for('shop_profile'))
+            
+            # Update user profile
+            update_data = {
+                'shop_name': shop_name,
+                'shop_address': shop_address,
+                'city': city,
+                'state': state,
+                'pincode': pincode,
+                'phone': phone,
+                'latitude': float(latitude) if latitude else None,
+                'longitude': float(longitude) if longitude else None,
+                'updated_at': datetime.utcnow()
+            }
+            
+            mongo.db.users.update_one(
+                {'_id': ObjectId(session['user_id'])},
+                {'$set': update_data}
+            )
+            
+            # Update all products with new shop information
+            mongo.db.products.update_many(
+                {'shop_owner_id': session['user_id']},
+                {'$set': {
+                    'shop_name': shop_name,
+                    'shop_city': city,
+                    'shop_state': state,
+                    'shop_pincode': pincode,
+                    'shop_latitude': float(latitude) if latitude else None,
+                    'shop_longitude': float(longitude) if longitude else None
+                }}
+            )
+            
+            flash('Shop profile updated successfully!', 'success')
+            return redirect(url_for('shop_profile'))
+            
+        except Exception as e:
+            print(f"Profile update error: {e}")
+            flash('Error updating profile. Please try again.', 'error')
+            return redirect(url_for('shop_profile'))
+    
+    # GET request - show profile form
+    user = mongo.db.users.find_one({'_id': ObjectId(session['user_id'])})
+    return render_template('shop_profile.html', user=user)
 
 @app.route('/notifications')
 def notifications():
