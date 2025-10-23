@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesti-Link - Connecting Farmers with Pesticide Shops</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/translation.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/debug-translation.js') }}"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-green-600 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="{{ url_for('index') }}" class="flex items-center space-x-2 text-white">
+                        <i class="fas fa-seedling text-xl sm:text-2xl"></i>
+                        <span class="text-lg sm:text-xl font-bold">Pesti-Link</span>
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button type="button" class="text-white hover:text-green-200 focus:outline-none focus:text-green-200" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector -->
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-globe text-white"></i>
+                        <select id="language-selector" class="bg-green-700 text-white px-2 py-1 rounded text-sm border-none focus:outline-none focus:ring-2 focus:ring-green-300">
+                            <option value="en">English</option>
+                            <option value="hi">Hindi</option>
+                            <option value="te">Telugu</option>
+                            <option value="ta">Tamil</option>
+                        </select>
+                    </div>
+                    
+                    {% if session.user_id %}
+                        <span class="text-white" data-translate="welcome">Welcome, {{ session.username }}!</span>
+                        <a href="{{ url_for('dashboard') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="dashboard">
+                            Dashboard
+                        </a>
+                        {% if session.user_type == 'farmer' %}
+                            <a href="{{ url_for('search') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="search_products">
+                                Search Products
+                            </a>
+                            <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
+                                My Orders
+                            </a>
+                            <a href="{{ url_for('notifications') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="notifications">
+                                Notifications
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('my_orders') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="my_orders">
+                                My Orders
+                            </a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="logout">
+                            Logout
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="text-white hover:text-green-200 px-3 py-2 rounded-md text-sm font-medium" data-translate="login">
+                            Login
+                        </a>
+                        <a href="{{ url_for('register') }}" class="bg-green-700 hover:bg-green-800 text-white px-3 py-2 rounded-md text-sm font-medium" data-translate="register">
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} bg-{{ 'green' if category == 'success' else 'red' if category == 'error' else 'blue' }}-100 border border-{{ 'green' if category == 'success' else 'red' if category == 'error' else 'blue' }}-400 text-{{ 'green' if category == 'success' else 'red' if category == 'error' else 'blue' }}-700 px-4 py-3 rounded mb-4">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center space-x-2 mb-4">
+                <i class="fas fa-seedling text-2xl"></i>
+                <span class="text-xl font-bold">Pesti-Link</span>
+            </div>
+            <p class="text-gray-400" data-translate="footer_tagline">Connecting Farmers with Pesticide Shops</p>
+            <p class="text-gray-500 text-sm mt-2" data-translate="copyright">&copy; 2024 Pesti-Link. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

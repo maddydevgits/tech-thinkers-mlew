@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="add_new_product_title">Add New Product</h1>
+        <p class="text-gray-600" data-translate="add_new_product_desc">Add pesticide or fertilizer details to your inventory</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- Product Image -->
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_image">
+                    Product Image
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-green-400 transition-colors">
+                    <div class="space-y-1 text-center">
+                        <i class="fas fa-cloud-upload-alt text-gray-400 text-4xl mb-4"></i>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+                                <span data-translate="upload_image">Upload an image</span>
+                                <input id="image" name="image" type="file" accept="image/*" class="sr-only">
+                            </label>
+                            <p class="pl-1" data-translate="or_drag_drop">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500" data-translate="file_formats">PNG, JPG, JPEG, GIF, WebP up to 16MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Product Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_name_required">
+                        Product Name *
+                    </label>
+                    <input type="text" id="name" name="name" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="e.g., Roundup Herbicide" data-translate-placeholder="product_name_placeholder">
+                </div>
+
+                <!-- Cost -->
+                <div>
+                    <label for="cost" class="block text-sm font-medium text-gray-700 mb-2" data-translate="cost_rupees">
+                        Cost (₹) *
+                    </label>
+                    <input type="number" id="cost" name="cost" step="0.01" min="0" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="0.00">
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2" data-translate="quantity_available">
+                        Quantity Available *
+                    </label>
+                    <input type="number" id="quantity" name="quantity" min="1" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="100">
+                </div>
+
+                <!-- Crop Type -->
+                <div>
+                    <label for="crop_type" class="block text-sm font-medium text-gray-700 mb-2" data-translate="suitable_for_crop">
+                        Suitable for Crop *
+                    </label>
+                    <select id="crop_type" name="crop_type" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        <option value="" data-translate="select_crop_type">Select Crop Type</option>
+                        <option value="Rice">Rice</option>
+                        <option value="Wheat">Wheat</option>
+                        <option value="Corn">Corn</option>
+                        <option value="Soybean">Soybean</option>
+                        <option value="Cotton">Cotton</option>
+                        <option value="Sugarcane">Sugarcane</option>
+                        <option value="Tomato">Tomato</option>
+                        <option value="Potato">Potato</option>
+                        <option value="Onion">Onion</option>
+                        <option value="Chili">Chili</option>
+                        <option value="General">General Use</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Specifications -->
+            <div>
+                <label for="specifications" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_specifications">
+                    Product Specifications *
+                </label>
+                <textarea id="specifications" name="specifications" rows="4" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Describe the product specifications, usage instructions, and benefits..." data-translate-placeholder="specifications_placeholder"></textarea>
+            </div>
+
+            <!-- Chemicals -->
+            <div>
+                <label for="chemicals" class="block text-sm font-medium text-gray-700 mb-2" data-translate="active_chemicals">
+                    Active Chemicals/Ingredients *
+                </label>
+                <textarea id="chemicals" name="chemicals" rows="3" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="List the main active chemicals or ingredients in this product..." data-translate-placeholder="chemicals_placeholder"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('dashboard') }}" 
+                    class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300" data-translate="cancel">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300" data-translate="add_product">
+                    <i class="fas fa-plus mr-2"></i>Add Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/file-upload.js') }}"></script>
+{% endblock %}

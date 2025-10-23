@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="edit_product_title">Edit Product</h1>
+        <p class="text-gray-600" data-translate="edit_product_desc">Update pesticide or fertilizer details</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            <!-- Product Image -->
+            <div>
+                <label for="image" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_image">
+                    Product Image
+                </label>
+                
+                <!-- Current Image Display -->
+                {% if product.image_filename %}
+                <div class="mb-4">
+                    <p class="text-sm text-gray-600 mb-2" data-translate="current_image">Current Image:</p>
+                    <div class="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden">
+                        <img src="{{ url_for('uploaded_file', filename=product.image_filename) }}" 
+                             alt="{{ product.name }}" 
+                             class="w-full h-full object-cover">
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-green-400 transition-colors">
+                    <div class="space-y-1 text-center">
+                        <i class="fas fa-cloud-upload-alt text-gray-400 text-4xl mb-4"></i>
+                        <div class="flex text-sm text-gray-600">
+                            <label for="image" class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500">
+                                <span data-translate="upload_change_image">{% if product.image_filename %}Change Image{% else %}Upload an image{% endif %}</span>
+                                <input id="image" name="image" type="file" accept="image/*" class="sr-only">
+                            </label>
+                            <p class="pl-1" data-translate="or_drag_drop">or drag and drop</p>
+                        </div>
+                        <p class="text-xs text-gray-500" data-translate="file_formats">PNG, JPG, JPEG, GIF, WebP up to 16MB</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Product Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_name_required">
+                        Product Name *
+                    </label>
+                    <input type="text" id="name" name="name" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        value="{{ product.name }}"
+                        placeholder="e.g., Roundup Herbicide" data-translate-placeholder="product_name_placeholder">
+                </div>
+
+                <!-- Cost -->
+                <div>
+                    <label for="cost" class="block text-sm font-medium text-gray-700 mb-2" data-translate="cost_rupees">
+                        Cost (₹) *
+                    </label>
+                    <input type="number" id="cost" name="cost" step="0.01" min="0" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        value="{{ product.cost }}"
+                        placeholder="0.00">
+                </div>
+
+                <!-- Quantity -->
+                <div>
+                    <label for="quantity" class="block text-sm font-medium text-gray-700 mb-2" data-translate="quantity_available">
+                        Quantity Available *
+                    </label>
+                    <input type="number" id="quantity" name="quantity" min="1" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        value="{{ product.quantity }}"
+                        placeholder="100">
+                </div>
+
+                <!-- Crop Type -->
+                <div>
+                    <label for="crop_type" class="block text-sm font-medium text-gray-700 mb-2" data-translate="suitable_for_crop">
+                        Suitable for Crop *
+                    </label>
+                    <select id="crop_type" name="crop_type" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        <option value="" data-translate="select_crop_type">Select Crop Type</option>
+                        <option value="Rice" {% if product.crop_type == 'Rice' %}selected{% endif %}>Rice</option>
+                        <option value="Wheat" {% if product.crop_type == 'Wheat' %}selected{% endif %}>Wheat</option>
+                        <option value="Corn" {% if product.crop_type == 'Corn' %}selected{% endif %}>Corn</option>
+                        <option value="Soybean" {% if product.crop_type == 'Soybean' %}selected{% endif %}>Soybean</option>
+                        <option value="Cotton" {% if product.crop_type == 'Cotton' %}selected{% endif %}>Cotton</option>
+                        <option value="Sugarcane" {% if product.crop_type == 'Sugarcane' %}selected{% endif %}>Sugarcane</option>
+                        <option value="Tomato" {% if product.crop_type == 'Tomato' %}selected{% endif %}>Tomato</option>
+                        <option value="Potato" {% if product.crop_type == 'Potato' %}selected{% endif %}>Potato</option>
+                        <option value="Onion" {% if product.crop_type == 'Onion' %}selected{% endif %}>Onion</option>
+                        <option value="Chili" {% if product.crop_type == 'Chili' %}selected{% endif %}>Chili</option>
+                        <option value="General" {% if product.crop_type == 'General' %}selected{% endif %}>General Use</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Specifications -->
+            <div>
+                <label for="specifications" class="block text-sm font-medium text-gray-700 mb-2" data-translate="product_specifications">
+                    Product Specifications *
+                </label>
+                <textarea id="specifications" name="specifications" rows="4" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Describe the product specifications, usage instructions, and benefits..." data-translate-placeholder="specifications_placeholder">{{ product.specifications }}</textarea>
+            </div>
+
+            <!-- Chemicals -->
+            <div>
+                <label for="chemicals" class="block text-sm font-medium text-gray-700 mb-2" data-translate="active_chemicals">
+                    Active Chemicals/Ingredients *
+                </label>
+                <textarea id="chemicals" name="chemicals" rows="3" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="List the main active chemicals or ingredients in this product..." data-translate-placeholder="chemicals_placeholder">{{ product.chemicals }}</textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4">
+                <a href="{{ url_for('dashboard') }}" 
+                    class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition duration-300" data-translate="cancel">
+                    Cancel
+                </a>
+                <button type="submit"
+                    class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition duration-300" data-translate="update_product">
+                    <i class="fas fa-save mr-2"></i>Update Product
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/file-upload.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <div class="text-center mb-8">
+        <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-green-600 text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="order_confirmed">Order Confirmed!</h1>
+        <p class="text-gray-600" data-translate="order_confirmed_desc">Your order has been placed successfully</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div class="border-b border-gray-200 pb-4 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800" data-translate="order_details">Order Details</h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Order Info -->
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="order_id">Order ID:</span>
+                    <span class="font-semibold text-gray-900">#{{ order.order_id }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="order_date">Order Date:</span>
+                    <span class="text-gray-900">{{ order.created_at.strftime('%d %b %Y at %I:%M %p') }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="status">Status:</span>
+                    <span class="px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800" data-translate="status_{{ order.status }}">{{ order.status.title() }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="total_amount">Total Amount:</span>
+                    <span class="text-xl font-bold text-green-600">₹{{ "%.2f"|format(order.total_amount) }}</span>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="space-y-4">
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="product_name">Product:</span>
+                    <span class="font-semibold text-gray-900">{{ order.product_name }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="quantity">Quantity:</span>
+                    <span class="text-gray-900">{{ order.quantity }} <span data-translate="units">units</span></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="unit_price">Unit Price:</span>
+                    <span class="text-gray-900">₹{{ "%.2f"|format(order.unit_price) }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600" data-translate="shop_name">Shop:</span>
+                    <span class="text-gray-900">{{ order.shop_name }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delivery Information -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <div class="border-b border-gray-200 pb-4 mb-6">
+            <h2 class="text-xl font-semibold text-gray-800" data-translate="delivery_info">Delivery Information</h2>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <span class="text-gray-600 font-medium" data-translate="delivery_address">Delivery Address:</span>
+                <p class="text-gray-900 mt-1">{{ order.delivery_address }}</p>
+            </div>
+            <div>
+                <span class="text-gray-600 font-medium" data-translate="contact_number">Contact Number:</span>
+                <p class="text-gray-900 mt-1">{{ order.contact_number }}</p>
+            </div>
+            {% if order.order_notes %}
+            <div>
+                <span class="text-gray-600 font-medium" data-translate="order_notes">Order Notes:</span>
+                <p class="text-gray-900 mt-1">{{ order.order_notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Next Steps -->
+    <div class="bg-blue-50 rounded-lg p-6 mb-8">
+        <h3 class="text-lg font-semibold text-blue-800 mb-4" data-translate="next_steps">What's Next?</h3>
+        <div class="space-y-3">
+            <div class="flex items-start">
+                <div class="bg-blue-500 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-blue-800 font-medium" data-translate="step_1">Order Placed</p>
+                    <p class="text-blue-600 text-sm" data-translate="step_1_desc">Your order has been sent to the shop owner</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="bg-gray-300 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-clock text-white text-xs"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-blue-800 font-medium" data-translate="step_2">Confirmation</p>
+                    <p class="text-blue-600 text-sm" data-translate="step_2_desc">Shop owner will confirm your order</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="bg-gray-300 w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                    <i class="fas fa-truck text-white text-xs"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-blue-800 font-medium" data-translate="step_3">Delivery</p>
+                    <p class="text-blue-600 text-sm" data-translate="step_3_desc">Product will be delivered to your address</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="{{ url_for('my_orders') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center justify-center">
+            <i class="fas fa-list mr-2"></i>
+            <span data-translate="view_my_orders">View My Orders</span>
+        </a>
+        <a href="{{ url_for('search') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center justify-center">
+            <i class="fas fa-search mr-2"></i>
+            <span data-translate="continue_shopping">Continue Shopping</span>
+        </a>
+        <a href="{{ url_for('dashboard') }}" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300 flex items-center justify-center">
+            <i class="fas fa-home mr-2"></i>
+            <span data-translate="go_to_dashboard">Go to Dashboard</span>
+        </a>
+    </div>
+</div>
+{% endblock %}

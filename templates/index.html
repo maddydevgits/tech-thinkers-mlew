@@ -1,0 +1,367 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white py-24 relative overflow-hidden">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-10 left-10 w-20 h-20 border-2 border-white rounded-full"></div>
+        <div class="absolute top-32 right-20 w-16 h-16 border-2 border-white rounded-full"></div>
+        <div class="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-white rounded-full"></div>
+        <div class="absolute bottom-32 right-1/3 w-24 h-24 border-2 border-white rounded-full"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+        <div class="mb-6">
+            <i class="fas fa-seedling text-6xl text-green-200 mb-4 animate-float"></i>
+        </div>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-fadeInUp" data-translate="welcome_title">
+            Welcome to <span class="text-yellow-300 gradient-text">Pesti-Link</span>
+        </h1>
+        <p class="text-2xl md:text-3xl mb-4 text-green-100 font-light" data-translate="bridging_gap">
+            Bridging the Gap Between
+        </p>
+        <p class="text-xl md:text-2xl mb-8 text-green-200" data-translate="farmers_shops">
+            🌾 Farmers & 🏪 Pesticide Shops
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <a href="{{ url_for('register') }}" class="bg-white text-green-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-lg" data-translate="get_started">
+                <i class="fas fa-rocket mr-2"></i>Get Started Free
+            </a>
+            <a href="{{ url_for('login') }}" class="border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-green-600 hover:scale-105 transition-all duration-300" data-translate="login">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login
+            </a>
+        </div>
+        <div class="mt-8 text-green-200">
+            <p class="text-lg" data-translate="features_highlight">✨ No setup fees • 🚀 Instant access • 📱 Mobile friendly</p>
+        </div>
+    </div>
+</div>
+
+<!-- Problem Statement -->
+<div class="py-16 bg-red-50">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <h2 class="text-3xl font-bold text-red-800 mb-6" data-translate="problem_title">The Problem We Solve</h2>
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <i class="fas fa-search text-red-500 text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2" data-translate="hard_to_find">Hard to Find Products</h3>
+                <p class="text-gray-600" data-translate="hard_to_find_desc">Farmers struggle to find the right pesticides for their specific crops</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <i class="fas fa-map-marker-alt text-red-500 text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2" data-translate="limited_visibility">Limited Shop Visibility</h3>
+                <p class="text-gray-600" data-translate="limited_visibility_desc">Pesticide shops can't reach farmers in their area effectively</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <i class="fas fa-clock text-red-500 text-3xl mb-4"></i>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2" data-translate="time_consuming">Time Consuming</h3>
+                <p class="text-gray-600" data-translate="time_consuming_desc">Manual searching and calling shops wastes valuable farming time</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4" data-translate="how_it_works_title">How Pesti-Link Works</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto" data-translate="how_it_works_desc">
+                A simple, powerful platform that connects farmers with pesticide shops in real-time
+            </p>
+        </div>
+        
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- For Shop Owners -->
+            <div class="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl shadow-lg hover-lift card-hover animate-fadeInLeft">
+                <div class="text-center mb-8">
+                    <div class="bg-green-500 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-store text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-2" data-translate="for_shop_owners">For Shop Owners</h3>
+                    <p class="text-gray-600" data-translate="for_shop_owners_desc">Expand your reach and grow your business</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-green-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-plus text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="easy_product_management">Easy Product Management</h4>
+                            <p class="text-gray-600" data-translate="easy_product_management_desc">Add pesticides and fertilizers with detailed specifications</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-green-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-chart-line text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="real_time_inventory">Real-time Inventory</h4>
+                            <p class="text-gray-600" data-translate="real_time_inventory_desc">Update pricing and availability instantly</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-green-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-users text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="reach_more_farmers">Reach More Farmers</h4>
+                            <p class="text-gray-600" data-translate="reach_more_farmers_desc">Connect with farmers looking for your products</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-green-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-bell text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="automatic_notifications">Automatic Notifications</h4>
+                            <p class="text-gray-600" data-translate="automatic_notifications_desc">Farmers get notified when you add new products</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- For Farmers -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-2xl shadow-lg hover-lift card-hover animate-fadeInRight">
+                <div class="text-center mb-8">
+                    <div class="bg-blue-500 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                        <i class="fas fa-tractor text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 mb-2" data-translate="for_farmers">For Farmers</h3>
+                    <p class="text-gray-600" data-translate="for_farmers_desc">Find the right products for your crops quickly</p>
+                </div>
+                <div class="space-y-4">
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-search text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="smart_search">Smart Search</h4>
+                            <p class="text-gray-600" data-translate="smart_search_desc">Find pesticides by name or crop type</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-map-marker-alt text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="find_local_shops">Find Local Shops</h4>
+                            <p class="text-gray-600" data-translate="find_local_shops_desc">See which shops have the products you need</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-balance-scale text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="compare_prices">Compare Prices</h4>
+                            <p class="text-gray-600" data-translate="compare_prices_desc">Compare prices and specifications across shops</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3">
+                        <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                            <i class="fas fa-bell text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800" data-translate="stay_updated">Stay Updated</h4>
+                            <p class="text-gray-600" data-translate="stay_updated_desc">Get notified about new products and deals</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="py-20 bg-gradient-to-r from-green-600 to-green-700 text-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4" data-translate="trusted_by_community">Trusted by the Agricultural Community</h2>
+            <p class="text-xl text-green-100" data-translate="join_thousands">Join thousands of farmers and shop owners already using Pesti-Link</p>
+        </div>
+        <div class="grid md:grid-cols-4 gap-8 text-center">
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm hover-lift hover:bg-opacity-20 transition-all duration-300">
+                <div class="text-5xl font-bold text-yellow-300 mb-2 stat-number">500+</div>
+                <div class="text-green-100 font-medium" data-translate="active_farmers">Active Farmers</div>
+                <div class="text-green-200 text-sm mt-1" data-translate="growing_daily">Growing daily</div>
+            </div>
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm hover-lift hover:bg-opacity-20 transition-all duration-300">
+                <div class="text-5xl font-bold text-yellow-300 mb-2 stat-number">150+</div>
+                <div class="text-green-100 font-medium" data-translate="partner_shops">Partner Shops</div>
+                <div class="text-green-200 text-sm mt-1" data-translate="across_regions">Across regions</div>
+            </div>
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm hover-lift hover:bg-opacity-20 transition-all duration-300">
+                <div class="text-5xl font-bold text-yellow-300 mb-2 stat-number">2000+</div>
+                <div class="text-green-100 font-medium" data-translate="products_listed">Products Listed</div>
+                <div class="text-green-200 text-sm mt-1" data-translate="pesticides_fertilizers">Pesticides & fertilizers</div>
+            </div>
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm hover-lift hover:bg-opacity-20 transition-all duration-300">
+                <div class="text-5xl font-bold text-yellow-300 mb-2 stat-number">95%</div>
+                <div class="text-green-100 font-medium" data-translate="success_rate">Success Rate</div>
+                <div class="text-green-200 text-sm mt-1" data-translate="farmers_find_products">Farmers find products</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4" data-translate="what_users_say">What Our Users Say</h2>
+            <p class="text-xl text-gray-600" data-translate="real_feedback">Real feedback from farmers and shop owners</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white p-8 rounded-xl shadow-lg hover-lift card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-6 italic" data-translate="testimonial_1">"Pesti-Link has revolutionized how I find pesticides for my rice fields. I can now compare prices and find the best deals without visiting multiple shops."</p>
+                <div class="flex items-center">
+                    <div class="bg-green-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-user text-green-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800" data-translate="testimonial_1_name">Rajesh Kumar</div>
+                        <div class="text-gray-500 text-sm" data-translate="testimonial_1_title">Rice Farmer, Punjab</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-lg hover-lift card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-6 italic" data-translate="testimonial_2">"As a pesticide shop owner, Pesti-Link has helped me reach farmers I never could before. My sales have increased by 40% since joining."</p>
+                <div class="flex items-center">
+                    <div class="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-store text-blue-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800" data-translate="testimonial_2_name">Priya Sharma</div>
+                        <div class="text-gray-500 text-sm" data-translate="testimonial_2_title">Shop Owner, Maharashtra</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-8 rounded-xl shadow-lg hover-lift card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="flex text-yellow-400">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                </div>
+                <p class="text-gray-600 mb-6 italic" data-translate="testimonial_3">"The notifications feature keeps me updated about new products. I never miss out on the latest pesticides for my vegetable farm."</p>
+                <div class="flex items-center">
+                    <div class="bg-purple-100 w-12 h-12 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-seedling text-purple-600"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-gray-800" data-translate="testimonial_3_name">Amit Patel</div>
+                        <div class="text-gray-500 text-sm" data-translate="testimonial_3_title">Vegetable Farmer, Gujarat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4" data-translate="how_it_works_steps">How It Works</h2>
+            <p class="text-xl text-gray-600" data-translate="get_started_steps">Get started in just 3 simple steps</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-12">
+            <div class="text-center">
+                <div class="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                    1
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4" data-translate="sign_up">Sign Up</h3>
+                <p class="text-gray-600" data-translate="sign_up_desc">Create your account as a farmer or shop owner in less than 2 minutes</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                    2
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4" data-translate="connect">Connect</h3>
+                <p class="text-gray-600" data-translate="connect_desc">Shop owners add products, farmers search and find what they need</p>
+            </div>
+            <div class="text-center">
+                <div class="bg-green-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold">
+                    3
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4" data-translate="grow">Grow</h3>
+                <p class="text-gray-600" data-translate="grow_desc">Farmers get better products, shops get more customers - everyone wins!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="py-24 bg-gradient-to-r from-green-600 via-green-700 to-green-800 text-white relative overflow-hidden">
+    <!-- Background Elements -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-20 left-20 w-32 h-32 border-2 border-white rounded-full"></div>
+        <div class="absolute bottom-20 right-20 w-24 h-24 border-2 border-white rounded-full"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 border-2 border-white rounded-full"></div>
+    </div>
+    
+    <div class="max-w-7xl mx-auto px-4 text-center relative z-10">
+        <div class="mb-8">
+            <i class="fas fa-seedling text-8xl text-green-200 mb-6 animate-bounce"></i>
+        </div>
+        <h2 class="text-5xl md:text-6xl font-bold mb-6" data-translate="ready_to_transform">Ready to Transform Agriculture?</h2>
+        <p class="text-2xl md:text-3xl mb-8 text-green-100 font-light" data-translate="join_revolution">
+            Join the agricultural revolution today
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
+            <a href="{{ url_for('register') }}" class="bg-white text-green-600 px-12 py-5 rounded-xl font-bold text-xl hover:bg-gray-100 hover:scale-105 transition-all duration-300 shadow-2xl">
+                <i class="fas fa-rocket mr-3"></i><span data-translate="start_journey">Start Your Journey</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="border-2 border-white text-white px-12 py-5 rounded-xl font-bold text-xl hover:bg-white hover:text-green-600 hover:scale-105 transition-all duration-300">
+                <i class="fas fa-search mr-3"></i><span data-translate="browse_products">Browse Products</span>
+            </a>
+        </div>
+        
+        <!-- Trust Indicators -->
+        <div class="grid md:grid-cols-3 gap-8 mt-16">
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                <i class="fas fa-shield-alt text-3xl text-yellow-300 mb-3"></i>
+                <h3 class="text-lg font-semibold mb-2" data-translate="secure">100% Secure</h3>
+                <p class="text-green-200 text-sm" data-translate="secure_desc">Your data is protected with enterprise-grade security</p>
+            </div>
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                <i class="fas fa-mobile-alt text-3xl text-yellow-300 mb-3"></i>
+                <h3 class="text-lg font-semibold mb-2" data-translate="mobile_first">Mobile First</h3>
+                <p class="text-green-200 text-sm" data-translate="mobile_first_desc">Access from any device, anywhere, anytime</p>
+            </div>
+            <div class="bg-white bg-opacity-10 p-6 rounded-xl backdrop-blur-sm">
+                <i class="fas fa-headset text-3xl text-yellow-300 mb-3"></i>
+                <h3 class="text-lg font-semibold mb-2" data-translate="support_24_7">24/7 Support</h3>
+                <p class="text-green-200 text-sm" data-translate="support_24_7_desc">Our team is here to help you succeed</p>
+            </div>
+        </div>
+        
+        <div class="mt-12 text-green-200">
+            <p class="text-lg" data-translate="final_features">🌱 Free to join • 🚀 No hidden fees • 📈 Grow your business</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

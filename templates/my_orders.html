@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2" data-translate="my_orders_title">My Orders</h1>
+        <p class="text-gray-600" data-translate="my_orders_desc">
+            {% if session.user_type == 'farmer' %}
+                Track your orders and delivery status
+            {% else %}
+                Manage orders from farmers
+            {% endif %}
+        </p>
+    </div>
+
+    {% if orders %}
+        <div class="bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h2 class="text-xl font-semibold text-gray-800" data-translate="order_list">Order List</h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="order_id">Order ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="product_name">Product</th>
+                            {% if session.user_type == 'farmer' %}
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="shop_name">Shop</th>
+                            {% else %}
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="farmer_name">Farmer</th>
+                            {% endif %}
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="quantity">Qty</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="total_amount">Total</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="status">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="order_date">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" data-translate="actions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for order in orders %}
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">#{{ order.order_id }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-medium text-gray-900">{{ order.product_name }}</div>
+                            </td>
+                            {% if session.user_type == 'farmer' %}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ order.shop_name }}</div>
+                            </td>
+                            {% else %}
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ order.farmer_name }}</div>
+                            </td>
+                            {% endif %}
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                {{ order.quantity }} <span data-translate="units">units</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ₹{{ "%.2f"|format(order.total_amount) }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                {% if order.status == 'pending' %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800" data-translate="status_pending">Pending</span>
+                                {% elif order.status == 'confirmed' %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800" data-translate="status_confirmed">Confirmed</span>
+                                {% elif order.status == 'shipped' %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800" data-translate="status_shipped">Shipped</span>
+                                {% elif order.status == 'delivered' %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800" data-translate="status_delivered">Delivered</span>
+                                {% elif order.status == 'cancelled' %}
+                                    <span class="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800" data-translate="status_cancelled">Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {{ order.created_at.strftime('%d %b %Y') }}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button onclick="viewOrderDetails('{{ order._id }}')" 
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3" data-translate="view_details">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </button>
+                                {% if session.user_type == 'shop_owner' and order.status != 'delivered' and order.status != 'cancelled' %}
+                                <button onclick="openStatusModal('{{ order._id }}', '{{ order.status }}')" 
+                                        class="text-green-600 hover:text-green-900" data-translate="update_status">
+                                    <i class="fas fa-edit mr-1"></i>Update
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center py-12 bg-white rounded-lg shadow">
+            <i class="fas fa-shopping-cart text-gray-400 text-6xl mb-4"></i>
+            <h3 class="text-lg font-medium text-gray-900 mb-2" data-translate="no_orders">No orders yet</h3>
+            <p class="text-gray-500 mb-6" data-translate="no_orders_desc">
+                {% if session.user_type == 'farmer' %}
+                    Start shopping to place your first order!
+                {% else %}
+                    Farmers haven't placed any orders yet.
+                {% endif %}
+            </p>
+            {% if session.user_type == 'farmer' %}
+                <a href="{{ url_for('search') }}" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition duration-300">
+                    <i class="fas fa-search mr-2"></i>
+                    <span data-translate="start_shopping">Start Shopping</span>
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<!-- Order Details Modal -->
+<div id="orderDetailsModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-medium text-gray-900" data-translate="order_details">Order Details</h3>
+                <button onclick="closeOrderDetailsModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div id="orderDetailsContent">
+                <!-- Order details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Status Modal -->
+<div id="statusModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg font-medium text-gray-900 mt-4" data-translate="update_status">Update Order Status</h3>
+            <div class="mt-4">
+                <form id="statusForm" method="POST">
+                    <select id="statusSelect" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500">
+                        <option value="pending" data-translate="status_pending">Pending</option>
+                        <option value="confirmed" data-translate="status_confirmed">Confirmed</option>
+                        <option value="shipped" data-translate="status_shipped">Shipped</option>
+                        <option value="delivered" data-translate="status_delivered">Delivered</option>
+                        <option value="cancelled" data-translate="status_cancelled">Cancelled</option>
+                    </select>
+                </form>
+            </div>
+            <div class="items-center px-4 py-3">
+                <button type="button" onclick="closeStatusModal()" 
+                        class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300 mr-2" data-translate="cancel">
+                    Cancel
+                </button>
+                <button type="button" onclick="updateOrderStatus()" 
+                        class="px-4 py-2 bg-green-600 text-white text-base font-medium rounded-md shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500" data-translate="update">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentOrderId = null;
+let ordersData = {{ orders | tojson }};
+
+function viewOrderDetails(orderId) {
+    // Find the order in the orders data
+    const order = ordersData.find(o => o._id === orderId);
+    
+    if (!order) {
+        document.getElementById('orderDetailsContent').innerHTML = `
+            <div class="text-center py-8">
+                <i class="fas fa-exclamation-triangle text-red-500 text-4xl mb-4"></i>
+                <p class="text-gray-600">Order not found</p>
+            </div>
+        `;
+    } else {
+        // Format the order details
+        let orderDate;
+        if (order.created_at && order.created_at.$date) {
+            orderDate = new Date(order.created_at.$date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } else if (order.created_at) {
+            orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } else {
+            orderDate = 'Unknown date';
+        }
+        
+        const statusColor = {
+            'pending': 'bg-yellow-100 text-yellow-800',
+            'confirmed': 'bg-blue-100 text-blue-800',
+            'shipped': 'bg-purple-100 text-purple-800',
+            'delivered': 'bg-green-100 text-green-800',
+            'cancelled': 'bg-red-100 text-red-800'
+        };
+        
+        document.getElementById('orderDetailsContent').innerHTML = `
+            <div class="space-y-6">
+                <!-- Order Header -->
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="text-lg font-semibold text-gray-900">Order #${order.order_id}</h4>
+                            <p class="text-sm text-gray-600">Placed on ${orderDate}</p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium ${statusColor[order.status]}">
+                            ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Product Information -->
+                <div>
+                    <h5 class="font-semibold text-gray-800 mb-3">Product Information</h5>
+                    <div class="bg-white border rounded-lg p-4">
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-sm text-gray-600">Product Name</p>
+                                <p class="font-medium text-gray-900">${order.product_name}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Quantity</p>
+                                <p class="font-medium text-gray-900">${order.quantity} units</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Unit Price</p>
+                                <p class="font-medium text-gray-900">₹${parseFloat(order.unit_price).toFixed(2)}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Total Amount</p>
+                                <p class="font-bold text-green-600 text-lg">₹${parseFloat(order.total_amount).toFixed(2)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delivery Information -->
+                <div>
+                    <h5 class="font-semibold text-gray-800 mb-3">Delivery Information</h5>
+                    <div class="bg-white border rounded-lg p-4">
+                        <div class="space-y-3">
+                            <div>
+                                <p class="text-sm text-gray-600">Delivery Address</p>
+                                <p class="text-gray-900">${order.delivery_address}</p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-gray-600">Contact Number</p>
+                                <p class="text-gray-900">${order.contact_number}</p>
+                            </div>
+                            ${order.order_notes ? `
+                            <div>
+                                <p class="text-sm text-gray-600">Order Notes</p>
+                                <p class="text-gray-900">${order.order_notes}</p>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Shop Information -->
+                <div>
+                    <h5 class="font-semibold text-gray-800 mb-3">Shop Information</h5>
+                    <div class="bg-white border rounded-lg p-4">
+                        <p class="text-gray-900">${order.shop_name}</p>
+                    </div>
+                </div>
+                
+                <!-- Order Timeline -->
+                <div>
+                    <h5 class="font-semibold text-gray-800 mb-3">Order Timeline</h5>
+                    <div class="space-y-2">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <span class="text-sm text-gray-600">Order placed on ${orderDate}</span>
+                        </div>
+                        ${order.status === 'confirmed' || order.status === 'shipped' || order.status === 'delivered' ? `
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                            <span class="text-sm text-gray-600">Order confirmed by shop owner</span>
+                        </div>
+                        ` : ''}
+                        ${order.status === 'shipped' || order.status === 'delivered' ? `
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                            <span class="text-sm text-gray-600">Order shipped</span>
+                        </div>
+                        ` : ''}
+                        ${order.status === 'delivered' ? `
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                            <span class="text-sm text-gray-600">Order delivered</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    document.getElementById('orderDetailsModal').classList.remove('hidden');
+}
+
+function closeOrderDetailsModal() {
+    document.getElementById('orderDetailsModal').classList.add('hidden');
+}
+
+function openStatusModal(orderId, currentStatus) {
+    currentOrderId = orderId;
+    document.getElementById('statusSelect').value = currentStatus;
+    document.getElementById('statusModal').classList.remove('hidden');
+}
+
+function closeStatusModal() {
+    document.getElementById('statusModal').classList.add('hidden');
+    currentOrderId = null;
+}
+
+function updateOrderStatus() {
+    if (!currentOrderId) return;
+    
+    const form = document.getElementById('statusForm');
+    form.action = '/update_order_status/' + currentOrderId;
+    form.submit();
+}
+
+// Close modals when clicking outside
+document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeOrderDetailsModal();
+    }
+});
+
+document.getElementById('statusModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeStatusModal();
+    }
+});
+</script>
+{% endblock %}
